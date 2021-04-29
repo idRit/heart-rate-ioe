@@ -518,8 +518,8 @@
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 
-                  <canvas id="myChart" style="width:100%;height:30vh"></canvas>
-                
+                  <canvas id="myChart" style="width:100%;height:40vh"></canvas>
+
                   <div class="dropdown no-arrow">
                     <!-- <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -704,7 +704,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Texas Instruments Medical Project</span>
+            <span>Medical Dashboard</span>
           </div>
         </div>
       </footer>
@@ -785,7 +785,7 @@
   </div>
 
   <!-- Bootstrap core JavaScript-->
- 
+
   <script src="js/socketio-client.js"></script>
   <!-- <script src="js/socket-io-map.js"></script> -->
 
@@ -829,19 +829,28 @@
       }]
     };
 
-    function adddata(temp,bpm) {
+    function adddata(temp, bpm) {
       myLineChart.data.datasets[0].data.push(bpm);
       let d = new Date()
-      d = d.toLocaleTimeString() 
+      d = d.toLocaleTimeString()
       myLineChart.data.labels.push(d)
+      maintainTopTen(myLineChart.data.datasets[0].data);
+      maintainTopTen(myLineChart.data.labels);
       myLineChart.update();
+    }
+
+    function maintainTopTen(list) {
+      if (list.length > 10) {
+        list.splice(0, list.length - 10)
+      }
+      return list;
     }
 
     var option = {
       showLines: true,
       scales: {
-      yAxes: [{ticks: {min: 10, max:150}}],
-    }
+        yAxes: [{ ticks: { min: 60, max: 90 } }],
+      }
     };
     var myLineChart = Chart.Line(canvas, {
       data: data,
@@ -850,7 +859,7 @@
 
 
     socket.on("ps", (sensorData) => {
-     
+
       console.log(sensorData);
       $("#bpmData").text(sensorData.bpm + " BPM");
       $("#bodyTempData").text(sensorData.temp + "  °C");
@@ -858,25 +867,8 @@
       $("#roomHumidityData").text(sensorData.humidity + " %");
       $('#alert-top-emergency').attr('hidden');
 
-      
-      adddata(sensorData.temp,sensorData.bpm);
-
-
-
-
+      adddata(sensorData.temp, sensorData.bpm);
     });
-
-
-
-
-
-
-
-
-
-
-
-
 
     function changeDropDownText(opt) {
       let valueSelected = $('#' + opt).text();
