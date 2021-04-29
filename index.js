@@ -9,6 +9,9 @@ app.use(express.static('public'))
 
 app.get("/", express.static(path.join(__dirname, 'public')));
 
+
+
+
 let server = app.listen(3001);
 console.log("listening on 3001");
 
